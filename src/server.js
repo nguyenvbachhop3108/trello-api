@@ -1,32 +1,28 @@
-/**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
+import express from "express";
+import "dotenv/config";
+import { CONNECT_DB, GET_DB, CLOSE_DB } from "~/config/mongodb";
+import AsyncExitHook from "async-exit-hook";
 
-import express from 'express'
-import { mapOrder } from '~/utils/sorts.js'
+const app = express();
 
-const app = express()
+const STAR_SERVER = () => {
+  app.get("/", async (req, res) => {
+    console.log(await GET_DB().listCollections().toArray());
+    res.end("<h1>Hello World!</h1><hr>");
+  });
 
-const hostname = 'localhost'
-const port = 8017
+  app.listen(process.env.PORT, () => {
+    // eslint-disable-next-line no-console
+    console.log(`Server is running on PORT: ${process.env.APP_PORT}`);
+  });
 
-app.get('/', (req, res) => {
-  // Test Absolute import mapOrder
-  console.log(mapOrder(
-    [ { id: 'id-1', name: 'One' },
-      { id: 'id-2', name: 'Two' },
-      { id: 'id-3', name: 'Three' },
-      { id: 'id-4', name: 'Four' },
-      { id: 'id-5', name: 'Five' } ],
-    ['id-5', 'id-4', 'id-2', 'id-3', 'id-1'],
-    'id'
-  ))
-  res.end('<h1>Hello World!</h1><hr>')
-})
+  AsyncExitHook(() => {
+    console.log("APP CLOSED");
+    CLOSE_DB();
+  });
+};
 
-app.listen(port, hostname, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Hello Trung Quan Dev, I am running at ${ hostname }:${ port }/`)
-})
+CONNECT_DB()
+  .then(console.log("Connect to MongoDb Atlas successed"))
+  .then(STAR_SERVER())
+  .catch((err) => console.log(err));
