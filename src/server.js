@@ -5,6 +5,7 @@ import AsyncExitHook from "async-exit-hook";
 import { APIs_V1 } from "./routes/v1";
 
 const app = express();
+app.use(express.json())
 
 const STAR_SERVER = () => {
   app.use("/v1", APIs_V1);

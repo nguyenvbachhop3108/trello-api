@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import { boardValidation } from "~/validations/boardValidation";
 const router = require("express").Router();
 
 router
@@ -6,8 +7,6 @@ router
   .get((req, res) => {
     res.status(StatusCodes.OK).json({ message: "Get all boards" });
   })
-  .post((req, res) => {
-    res.status(StatusCodes.CREATED).json({ message: "Post boards" });
-  });
+  .post(boardValidation.createNew);
 
-export const boardRoutes = router;
+export const boardRoute = router;
